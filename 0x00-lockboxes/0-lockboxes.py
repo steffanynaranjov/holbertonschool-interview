@@ -15,7 +15,7 @@ def canUnlockAll(boxes):
 
     # if there is not more boxes the loops will stop
     lockedBox = True
-       #using bolean to know about the boxes
+
     while lockedBox:
         lockedBox = False
         for x in range(len(boxes)):
