@@ -27,4 +27,3 @@ def canUnlockAll(boxes):
     if not unlockedBoxes:
         return True
     return False
-    
