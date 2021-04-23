@@ -13,7 +13,7 @@ def canUnlockAll(boxes):
     keys = [0]
     unlockedBoxes = list(range(len(boxes)))
 
-    # if there is not more boxes the loops will stop
+    # if there is not more boxes the loops will stop with this parameter
     lockedBox = True
 
     while lockedBox:
