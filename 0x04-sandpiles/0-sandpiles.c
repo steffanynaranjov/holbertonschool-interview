@@ -1,36 +1,15 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include "sandpiles.h"
 
 /**
- * grid_addition - add 2 grids
- * @grid1: first matrix
- * @grid2: second matrix
+ * print_grid - prints a 3x3 grid of integers
+ * @grid: grid to print
+ * Return: nothing
  */
-
-void grid_addition(int grid1[3][3], int grid2[3][3])
+static void print_grid(int grid[3][3])
 {
-	int i, j;
+	int i, j;  /**i: row index, j:column index*/
 
-	for (i = 0; i < 3; i++)
-	{
-		for (j = 0; j < 3; j++)
-		{
-			grid1[i][j] = grid1[i][j] + grid2[i][j];
-		}
-	}
-}
-
-/**
- * grid_print - print a grid
- * @grid: matrix
- */
-
-void grid_print(int grid[3][3])
-{
-	int i = 0;
-	int j = 0;
-
-	printf("=\n");
 	for (i = 0; i < 3; i++)
 	{
 		for (j = 0; j < 3; j++)
@@ -44,77 +23,84 @@ void grid_print(int grid[3][3])
 }
 
 /**
- * grid_is_ok - check if a grid is ok
- * @grid: matrix
- * Return: 1 if is ok or 0 if not
- */
-
-int grid_is_ok(int grid[3][3])
-{
-	int i = 0;
-	int j = 0;
-
-	for (i = 0; i < 3; i++)
-	{
-		for (j = 0; j < 3; j++)
-		{
-			if (grid[i][j] > 3)
-				return (0);
-		}
-	}
-	return (1);
-}
-
-/**
- * grid_change - change a grid value
- * @grid1: matrix
- */
-
-void grid_change(int grid1[3][3])
-{
-	int i = 0;
-	int j = 0;
-	int gridx[3][3];
-
-	for (i = 0; i < 3; i++)
-	{
-		for (j = 0; j < 3; j++)
-			gridx[i][j] = 0;
-	}
-
-	for (i = 0; i < 3; i++)
-	{
-		for (j = 0; j < 3; j++)
-		{
-			if (grid1[i][j] > 3)
-			{
-				grid1[i][j] = grid1[i][j] - 4;
-				if ((i - 1) >= 0 && (i - 1) < 3)
-					gridx[i - 1][j] += 1;
-				if ((j - 1) >= 0 && (j - 1) < 3)
-					gridx[i][j - 1] += 1;
-				if ((i + 1) >= 0 && (i + 1) < 3)
-					gridx[i + 1][j] += 1;
-				if ((j + 1) >= 0 && (j + 1) < 3)
-					gridx[i][j + 1] += 1;
-			}
-		}
-	}
-	grid_addition(grid1, gridx);
-}
-
-/**
- * sandpiles_sum - sum 2 sandpiles
- * @grid1: first matrix
- * @grid2: second matrix
+ * sandpiles_sum - function that computes the sum of two sandpiles
+ * @grid1: first grid
+ * @grid2: second grid
+ * Return: nothing
  */
 
 void sandpiles_sum(int grid1[3][3], int grid2[3][3])
 {
-	grid_addition(grid1, grid2);
-	while (!grid_is_ok(grid1))
+	int i, j; /**i: row index, j:column index*/
+
+	for (i = 0; i < 3; i++)
+		for (j = 0; j < 3; j++)
+			grid1[i][j] += grid2[i][j];
+
+	while (is_unstable(grid1))
 	{
-		grid_print(grid1);
-		grid_change(grid1);
+		printf("=\n");
+		print_grid(grid1);
+		toppling_round(grid1);
 	}
+}
+
+/**
+ * is_unstable - checks if a 3x3 sandpile is unstable (contains a cell
+ * holding more than three grains)
+ * @grid: grid to check
+ * Return: if the grid is unstable, a value different to zero is returned,
+ * otherwise, the function will return zero
+ */
+
+int is_unstable(int grid[3][3])
+{
+	int i, j; /**i: row index, j:column index*/
+
+	for (i = 0; i < 3; i++)
+		for (j = 0; j < 3; j++)
+			if (grid[i][j] > 3)
+				return (1);
+
+	return (0);
+}
+
+
+/**
+ * toppling_round - topples a 3x3 unstable sandpile
+ * @grid: grid to toppling
+ * Return: nothing
+ */
+
+void toppling_round(int grid[3][3])
+{
+	int i, j; /**i: row index, j:column index*/
+	int residue[3][3] = {
+		{0, 0, 0},
+		{0, 0, 0},
+		{0, 0, 0}
+	};
+
+	for (i = 0; i < 3; i++)
+	{
+		for (j = 0; j < 3; j++)
+		{
+			if (grid[i][j] >= 4)
+			{
+				grid[i][j] -= 4;
+				if (j - 1 >= 0)
+					residue[i][j - 1]++;
+				if (j + 1 < 3)
+					residue[i][j + 1]++;
+				if (i - 1 >= 0)
+					residue[i - 1][j]++;
+				if (i + 1 < 3)
+					residue[i + 1][j]++;
+			}
+		}
+	}
+
+	for (i = 0; i < 3; i++)
+		for (j = 0; j < 3; j++)
+			grid[i][j] += residue[i][j];
 }
