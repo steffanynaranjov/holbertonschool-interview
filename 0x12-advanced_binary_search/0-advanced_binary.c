@@ -1,60 +1,71 @@
 #include "search_algos.h"
+
 /**
- * print_array - print the message
- * @array: array to print
- * @from: index to start print
- * @to: index to end print
+ * print_arrayAd - Prints an array between two boundaries
+ * @array: pointer to the first element of the array to print
+ * @min: left boundary
+ * @max: right boundary
  *
- * Return: is a void
+ * Return: No Return
  */
-void print_array(int *array, int from, int to)
+void print_arrayAd(int *array, int min, int max)
 {
-	printf("Searching in array: ");
-	while (from < to)
-	{
-		printf("%i, ", array[from]);
-		from++;
-	}
-	printf("%i\n", array[from]);
+	int i;
+
+	for (i = min; i < max; i++)
+		printf("%d, ", array[i]);
+
+	printf("%d\n", array[i]);
 }
 /**
- * recursion_binary - print the message
- * @array: array to find
- * @from: index to start search
- * @to: index to end search
- * @value: value to find
+ * auxBinary - searches for a value in a sorted array of integers
+ * using the Binary search algorithm
+ * @array: pointer to the first element of the array to search in
+ * @min: left boundary
+ * @max: right bounday
+ * @value: value to search for
  *
- * Return: index
+ * Return: Index where value is located or -1
  */
-int recursion_binary(int *array, int from, int to, int value)
+int auxBinary(int *array, int min, int max, int value)
 {
 	int mid;
 
-	print_array(array, from, to);
-	mid = (to - from) / 2 + from;
-	if (from == to)
+	if (min > max)
 		return (-1);
-	if (array[mid] == value && array[mid - 1] != value)
+
+	printf("Searching in array: ");
+	print_arrayAd(array, min, max);
+
+	if (min == max && array[max] == value)
+		return (max);
+
+	if (min == max && array[max] != value)
+		return (-1);
+
+	mid = min + (max - min) / 2;
+
+	if ((mid == min || value != array[mid - 1]) && array[mid] == value)
 		return (mid);
+
 	if (array[mid] >= value)
-		return (recursion_binary(array, from, mid, value));
-	if (array[mid] <= value)
-		return (recursion_binary(array, mid + 1, to, value));
-	return (-1);
+		return (auxBinary(array, min, mid, value));
+	return (auxBinary(array, mid + 1, max, value));
 }
 /**
- * advanced_binary - print the message
- * @array: array to find
- * @size: array length
- * @value: value to find
+ * advanced_binary - searches for a value in a sorted array of integers
+ * using the Binary search algorithm (Returns First Ocurrence)
+ * @array: pointer to the first element of the array to search in
+ * @size: number of elements in array
+ * @value: value to search for
  *
- * Return: index
+ * Return: First index where value is located or -1
  */
 int advanced_binary(int *array, size_t size, int value)
 {
 
-	if (!array)
+	if (!array || size == 0)
 		return (-1);
 
-	return (recursion_binary(array, 0, size - 1, value));
+	return (auxBinary(array, 0, size - 1, value));
 }
